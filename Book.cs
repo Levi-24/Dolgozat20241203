@@ -77,6 +77,7 @@ namespace Dolgozat20241203
                     throw new Exception("The price must be between 1000 and 10000.");
                 if (value % 100 != 0)
                     throw new Exception("The price must be dividable by 100.");
+                price = value;
             }
         }
 

@@ -1,15 +1,4 @@
 ﻿using Dolgozat20241203;
-using System.Diagnostics;
-
-//Book book1 = new Book( "Harry Potter", "Kurva Anyád");
-//Console.WriteLine(book1);
-
-//Book book2 = new Book("1234567891", "Harry Potter", 2019, "angol", 3, 2100, ["Fasz Fej", "Kurva Anyád"]);
-//Console.WriteLine(book2);
-
-//string[] authors = ["Fasz Fej", "Kurva Anyád"];
-//Book book3 = new Book("1234567891", "Harry Potter", 2019, "angol", 3, 2100, authors);
-//Console.WriteLine(book2);
 
 string[] hunTitles = new string[]
 {
@@ -34,7 +23,7 @@ string[] hunTitles = new string[]
     "A vihar szíve",
     "A fényszóró árnyéka",
 };
-string[] engTitle = new string[] {
+string[] engTitles = new string[] {
     "Whispers of the Night",
     "The Shadow's Embrace",
     "Beneath the Crimson Sky",
@@ -47,7 +36,6 @@ string[] engTitle = new string[] {
     "Waves of Eternity"};
 string[] hunAuthors = new string[]
 {
-    // Magyar szerzők
     "Kertész Imre",
     "Károlyi Mihály",
     "Móricz Zsigmond",
@@ -86,25 +74,79 @@ List<Book> books = new();
 
 for (int i = 0; i < 15; i++)
 {
-    int lang = Random.Shared.Next(0, 10);
     string isbn = new Random().NextInt64(1000000000, 9999999999).ToString();
-    string author = "";
-    string title = "";
-    if (lang <= 1)
+    while (books.Any(x => x.Isbn == isbn))
     {
-        author = engAuthors[Random.Shared.Next(0, engAuthors.Length)];
-        title = engTitle[Random.Shared.Next(0, engTitle.Length)];
+        isbn = new Random().NextInt64(1000000000, 9999999999).ToString();
+    }
+
+    int year = Random.Shared.Next(2017, DateTime.Now.Year);
+    uint stock = (uint)Random.Shared.Next(5, 11);
+    double temp = Random.Shared.NextInt64(1000, 10000);
+    int price = (int)Math.Round(temp / 100, 0) * 100;
+    if (Random.Shared.Next(0, 10) <= 2) stock = 0;
+
+    string title = hunTitles[Random.Shared.Next(0, hunTitles.Length)];
+    string language = "magyar";
+    List<string> authorList = new();
+
+    if (Random.Shared.Next(0, 10) <= 2)
+    {
+        title = engTitles[Random.Shared.Next(0, engTitles.Length)];
+        int authorCount = Random.Shared.Next(1, 4); 
+        for (int j = 0; j < authorCount; j++)
+        {
+            authorList.Add(PickAuthor(engAuthors));
+        }
+        language = "angol";
     }
     else
     {
-        author = hunAuthors[Random.Shared.Next(0, hunAuthors.Length)];
-        title = hunTitles[Random.Shared.Next(0, hunTitles.Length)];
+        int authorCount = Random.Shared.Next(1, 4);
+        for (int j = 0; j < authorCount; j++)
+        {
+            authorList.Add(PickAuthor(hunAuthors));
+        }
     }
-    //ellenőrizd isbn
 
+    books.Add(new Book(isbn, title, year, language, stock, price, authorList.ToArray()));
+}
 
+int moneySpent = 0;
+int booksRemoved = 0;
+int originalBookCount = books.Count();
 
+for (int i = 0; i < 100; i++)
+{
+    if (books.Count == 0) break;
+    Book randomBook = books[Random.Shared.Next(0, books.Count)];
 
+    if (randomBook.Stock > 0)
+    {
+        moneySpent += randomBook.Price;
+        randomBook.Stock--;
+    }
+    else
+    {
+        if (Random.Shared.Next(0, 2) == 0)
+        {
+            randomBook.Stock += (uint)Random.Shared.Next(1, 11);
+        }
+        else
+        {
+            books.Remove(randomBook);
+            booksRemoved++;
+        }
+    }
+}
 
-    books.Add(new Book(isbn,))
+Console.WriteLine($"Bevétel: {moneySpent} Ft");
+Console.WriteLine($"Nagykertől eltávolított könyvek: {booksRemoved}");
+Console.WriteLine($"Eredeti könyvek száma: {originalBookCount} db");
+Console.WriteLine($"Jelenlegi könyvek száma: {books.Count} db");
+Console.WriteLine($"Eltűnt könyvek: {originalBookCount - books.Count} db");
+
+static string PickAuthor(string[] authors)
+{
+    return authors[Random.Shared.Next(0, authors.Length)];
 }

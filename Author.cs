@@ -18,7 +18,7 @@ namespace Dolgozat20241203
             {
                 if (value is null)
                     throw new ArgumentException("You didn't specify the first name.");
-                if (value.Length < 3 || value.Length > 32)
+                if (value.Length < 3 || value.Length >= 32)
                     throw new ArgumentException("The first name length must be between 3 and 32 characters.");
                 firstName = value;
             } 
@@ -29,7 +29,7 @@ namespace Dolgozat20241203
             {
                 if (value is null)
                     throw new ArgumentException("You didn't specify the last name.");
-                if (value.Length < 3 || value.Length > 32)
+                if (value.Length < 3 || value.Length >= 32)
                     throw new ArgumentException("The last name length must be between 3 and 32 characters.");
                 lastName = value;
             }
@@ -44,6 +44,8 @@ namespace Dolgozat20241203
             FirstName = names[0];
             LastName = names[1];
         }
+
+
 
         public override string ToString()
         {
